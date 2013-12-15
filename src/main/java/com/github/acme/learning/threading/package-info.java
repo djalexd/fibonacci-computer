@@ -16,4 +16,7 @@
  *   f(15) (starts at 0s, takes 5s),
  *   f(20) (starts at 4s, takes 8s) (5s' + 1s)
  *
+ * 5. FibonacciSeriesCache, f(x) => find the biggest computed y that is smaller than x, then
+ * lock the y-x segment and compute the numbers and unlock.
+ *
  */
