@@ -40,4 +40,40 @@ public abstract class AbstractFibonacciTest {
         // assert
         Assertions.assertThat(value1).isEqualTo(34);
     }
+
+    @Test
+    public void shouldComputeFibonacciCorrectly3(){
+        // when
+        // then
+        long value1 = computer().computeFibonacciAtIndex(1);
+        // assert
+        Assertions.assertThat(value1).isEqualTo(0);
+    }
+
+    @Test
+    public void shouldComputeFibonacciCorrectly4(){
+        // when
+        // then
+        long value1 = computer().computeFibonacciAtIndex(2);
+        // assert
+        Assertions.assertThat(value1).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldComputeFibonacciCorrectly5(){
+        // when
+        // then
+        long value1 = computer().computeFibonacciAtIndex(3);
+        // assert
+        Assertions.assertThat(value1).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldComputeFibonacciCorrectly6(){
+        // when
+        // then
+        long value1 = computer().computeFibonacciAtIndex(4);
+        // assert
+        Assertions.assertThat(value1).isEqualTo(2);
+    }
 }
