@@ -2,6 +2,16 @@ package com.github.acme.learning.threading;
 
 /**
  * Created by alexpeptan on 19/12/13.
+ *
+ * Known weakness:
+ * Assume that at moment t0 there is a call on computeFibonacciAtIndex(position) and that the FibonacciDataHolderhas no value computed for that position.
+ * Then, naturally, the recursive algorithm of initializing threads to start computing fibonacci value for that position initiates.
+ * Between that moment and the moment t1 when this thread executes - FibonacciDataHolder.setFibonacci(position, result);// set value in data holder to be used in the future.
+ * there may exist many attempts to interrogate the data holder for the fibonacci value that is in the process of being calculated followed by the initiation of the same
+ * algorithm to compute the value that thread T was already working on, wasting resources.
+ * Future implementation will enable a thread announce himself to be responsible for that computation and no other thread will be involved in that process.
+ * In this way, later threads asking for the same value would rather sleep wait for that thread to finish his computation than perform redundant operations.
+ *
  */
 public class FibonacciComputerWithDataHolder implements FibonacciComputer {
     private boolean child1Computed = false;
@@ -93,6 +103,8 @@ public class FibonacciComputerWithDataHolder implements FibonacciComputer {
         } else {
             result = alreadyComputedValue;
         }
+
+        FibonacciDataHolder.setFibonacci(position, result);// set value in data holder to be used in the future.
 
         return result;
     }
