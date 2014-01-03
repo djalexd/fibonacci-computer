@@ -117,57 +117,61 @@ public class FibonacciComputerWithDataHolder implements FibonacciComputer {
             child2Computed = true;
         }
     }
-}
 
-class FibonacciDataHolder {
-    private static boolean initialized = false;
-    private static long[] computedData = new long[50];
+    class FibonacciChildComputerWithDataHolder{
+        private FibonacciComputerWithDataHolder parentThread;
+        private Long result = null;
+        private int position = -1;
+        private int childID = -1;
 
-    public static void initializeDataHolderIfNotYetInitialized()
-    {
-        if(!initialized){
-            initialized = true;
-            System.out.println("Data holder initialized");// un se initializeaza ca si static block.. trebuie sa mai citesc despre asta
-            for(int i = 0; i < 50; i++){
-                computedData[i] = -1;
-            }
-            computedData[1] = 0;
-            computedData[2] = 1;
+        protected FibonacciChildComputerWithDataHolder(FibonacciComputerWithDataHolder parent, int position, int childID) {
+            parentThread = parent;
+            this.position = position;
+            this.childID = childID;
+        }
+
+        protected long calculateNextFibonacci(){
+            result = new FibonacciComputerMultiThreadWithOverhead().computeFibonacciAtIndex(position);
+
+            // when done notify parent
+            parentThread.notifyParentThread(childID);
+
+            return result;
+        }
+
+        public Long getResult() {
+            return result;
         }
     }
 
-    public static long getFibonacci(int position) {
-        return computedData[position];
-    }
+    static class FibonacciDataHolder {
+        private static boolean initialized = false;
+        private static long[] computedData = new long[50];
+
+        public static void initializeDataHolderIfNotYetInitialized()
+        {
+            if(!initialized){
+                initialized = true;
+                System.out.println("Data holder initialized");// un se initializeaza ca si static block.. trebuie sa mai citesc despre asta
+                for(int i = 0; i < 50; i++){
+                    computedData[i] = -1;
+                }
+                computedData[1] = 0;
+                computedData[2] = 1;
+            }
+        }
+
+        public static long getFibonacci(int position) {
+            return computedData[position];
+        }
 
 
-    public static void setFibonacci(int position, long value) {
-        computedData[position] = value;
-    }
-}
-
-class FibonacciChildComputerWithDataHolder{
-    private FibonacciComputerWithDataHolder parentThread;
-    private Long result = null;
-    private int position = -1;
-    private int childID = -1;
-
-    protected FibonacciChildComputerWithDataHolder(FibonacciComputerWithDataHolder parent, int position, int childID) {
-        parentThread = parent;
-        this.position = position;
-        this.childID = childID;
-    }
-
-    protected long calculateNextFibonacci(){
-        result = new FibonacciComputerMultiThreadWithOverhead().computeFibonacciAtIndex(position);
-
-        // when done notify parent
-        parentThread.notifyParentThread(childID);
-
-        return result;
-    }
-
-    public Long getResult() {
-        return result;
+        public static void setFibonacci(int position, long value) {
+            computedData[position] = value;
+        }
     }
 }
+
+
+
+
