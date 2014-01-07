@@ -24,8 +24,12 @@ public class FibonacciComputerWithThreadSignalingDataHolder implements Fibonacci
     class MonitorObject {}
 
     class MyWaitNotify {
-        MonitorObject myMonitorObject = new MonitorObject();
+        MonitorObject myMonitorObject;
         boolean wasSignaled = false;
+
+        MyWaitNotify() {
+            myMonitorObject = new MonitorObject();
+        }
 
         public void doWait() {
             synchronized (myMonitorObject){
@@ -80,25 +84,13 @@ public class FibonacciComputerWithThreadSignalingDataHolder implements Fibonacci
                     // compute data for lower levels
                     Runnable runnable = new Runnable() {
                         public void run(){
-
-                            FibonacciComputerWithThreadSignalingDataHolder child1;
-                            child1 = new FibonacciComputerWithThreadSignalingDataHolder();
-                            long c1 = child1.computeFibonacciAtIndex(position - 2);
-                            computedData[position - 2] = c1;
+                            setFibonacci(position - 2, new FibonacciComputerWithThreadSignalingDataHolder().computeFibonacciAtIndex(position - 2));
                             //results consolidation, if the case
                             if(computedData[position - 3] != -1) {
-                                setFibonacci(position - 1, c1 + computedData[position - 3]);
-                                //notification step
-                                if(null != waitNotifyObjects[position - 1]){
-                                    waitNotifyObjects[position - 1].doNotify();
-                                }
+                                setFibonacci(position - 1, computedData[position - 2] + computedData[position - 3]);
                             }
                             if(computedData[position - 1] != -1) {
-                                setFibonacci(position, c1 + computedData[position - 1]);
-                                //notification step
-                                if(null != waitNotifyObjects[position]) {
-                                    waitNotifyObjects[position].doNotify();
-                                }
+                                setFibonacci(position, computedData[position - 2] + computedData[position - 1]);
                             }
                         }
                     };
@@ -108,25 +100,13 @@ public class FibonacciComputerWithThreadSignalingDataHolder implements Fibonacci
                     System.out.println("start thread to get value for position " + (position - 1));
                     Runnable runnable2 = new Runnable() {
                         public void run(){
-
-                            FibonacciComputerWithThreadSignalingDataHolder child2;
-                            child2 = new FibonacciComputerWithThreadSignalingDataHolder();
-                            long c2 = child2.computeFibonacciAtIndex(position - 1);
-                            computedData[position - 1] = c2;
+                            setFibonacci(position - 1, new FibonacciComputerWithThreadSignalingDataHolder().computeFibonacciAtIndex(position - 1));
                             //results consolidation, if the case
                             if(computedData[position - 2] != -1) {
-                                setFibonacci(position, computedData[position - 2] + c2);
-                                //notification step
-                                if(null != waitNotifyObjects[position]) {
-                                    waitNotifyObjects[position].doNotify();
-                                }
+                                setFibonacci(position, computedData[position - 2] + computedData[position - 1]);
                             }
                             if(computedData[position] != -1) {
-                                setFibonacci(position + 1, c2 + computedData[position]);
-                                //notification step
-                                if(null != waitNotifyObjects[position + 1]) {
-                                    waitNotifyObjects[position + 1].doNotify();
-                                }
+                                setFibonacci(position + 1, computedData[position - 1] + computedData[position]);
                             }
                         }
                     };
@@ -149,6 +129,11 @@ public class FibonacciComputerWithThreadSignalingDataHolder implements Fibonacci
 
         public static void setFibonacci(int position, long value) {
             computedData[position] = value;
+
+            //notification step
+            if(null != waitNotifyObjects[position]) {
+                waitNotifyObjects[position].doNotify();
+            }
         }
     }
 }
