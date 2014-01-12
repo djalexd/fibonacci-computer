@@ -131,7 +131,7 @@ public class FibonacciComputerWithDataHolder implements FibonacciComputer {
         }
 
         protected long calculateNextFibonacci(){
-            result = new FibonacciComputerMultiThreadWithOverhead().computeFibonacciAtIndex(position);
+            result = new FibonacciComputerWithDataHolder().computeFibonacciAtIndex(position);
 
             // when done notify parent
             parentThread.notifyParentThread(childID);
